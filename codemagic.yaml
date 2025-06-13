@@ -5,7 +5,7 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       node: latest
-      java: 11
+      java: 17
     scripts:
       - name: Install dependencies
         script: npm install
@@ -15,8 +15,10 @@ workflows:
         script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "./android/local.properties"
       - name: Make gradlew executable
         script: chmod +x ./android/gradlew
+      - name: Set JAVA_HOME
+        script: export JAVA_HOME="$JAVA_HOME_17_X64" && echo $JAVA_HOME
       - name: Build Android release
-        script: cd android && ./gradlew assembleRelease
+        script: cd android && ./gradlew assembleRelease --stacktrace
     artifacts:
       - android/app/build/outputs/**/*.apk
     publishing:
