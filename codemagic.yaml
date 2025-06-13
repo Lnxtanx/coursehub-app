@@ -1,6 +1,6 @@
 workflows:
-  android-workflow:
-    name: Android Build
+  react-native-android:
+    name: React Native Android
     max_build_duration: 60
     environment:
       vars:
