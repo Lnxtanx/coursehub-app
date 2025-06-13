@@ -6,15 +6,21 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vivek1387.coursehub"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.vivek1387.coursehub"
@@ -22,6 +28,10 @@
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "course-hub",
     "extra": {
       "eas": {
         "projectId": "f11c5f0c-06a1-412f-9e50-d39000fc138a"
