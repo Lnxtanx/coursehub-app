@@ -4,10 +4,11 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
+      node: latest
       vars:
         PACKAGE_NAME: "com.vivek1387.coursehub"
         ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT
-      node: latest    scripts:
+    scripts:
       - name: Install dependencies
         script: |
           yarn install
@@ -28,7 +29,8 @@ workflows:
           cd android
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleDebug    artifacts:
+          ./gradlew assembleDebug
+    artifacts:
       - android/app/build/outputs/**/*.apk
     publishing:
       email:
