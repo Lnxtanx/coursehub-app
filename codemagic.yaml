@@ -1,0 +1,25 @@
+workflows:
+  react-native-android:
+    name: React Native Android
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      node: latest
+      java: 11
+    scripts:
+      - name: Install dependencies
+        script: |
+          yarn install
+      - name: Set up local properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Build Android release
+        script: |
+          cd android
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - user@example.com # Update this with your email
