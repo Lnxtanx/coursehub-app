@@ -1,0 +1,53 @@
+workflows:
+  react-native-android:
+    name: React Native Android
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      node: latest
+      vars:
+        PACKAGE_NAME: "com.vivek1387.coursehub"
+        ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT
+    scripts:
+      - name: Install dependencies
+        script: |
+          yarn install
+          # Install expo as a dependency
+          yarn add expo@latest
+      
+      - name: Install Expo CLI
+        script: |
+          yarn add @expo/cli
+          yarn expo install
+      
+      - name: Run prebuild
+        script: |
+          yarn expo prebuild -p android --clean
+      
+      - name: Generate debug keystore
+        script: |
+          cd android
+          keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          mv debug.keystore app/
+      
+      - name: Set up local properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      
+      - name: Build Android debug
+        script: |
+          cd android
+          chmod +x gradlew
+          # Run build with stacktrace for better error reporting
+          ./gradlew clean
+          ./gradlew generateDebugBuildConfig
+          ./gradlew :app:processDebugResources
+          ./gradlew assembleDebug --stacktrace
+    
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+    
+    publishing:
+      email:
+        recipients:
+          - user@example.com
