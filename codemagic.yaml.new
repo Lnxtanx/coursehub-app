@@ -4,13 +4,14 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
-      java: 11
       android_signing:
         - keystore_reference
-      groups:
-        - google_play
+      node: latest
+      java: 17
       vars:
         PACKAGE_NAME: "com.vivek1387.coursehub"
+        ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT
+        JAVA_HOME: $JAVA_HOME
     scripts:
       - name: Install dependencies
         script: |
@@ -44,21 +45,27 @@ workflows:
           # After prebuild, restore original app.json configuration
           cp app.json temp-app.json
       
-      - name: Set up local properties
+      - name: Set up Java
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
-      
+          echo $JAVA_HOME
+          java -version
+          
       - name: Generate debug keystore
         script: |
           cd android
-          keytool -genkeypair -v -keystore app/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          mv debug.keystore app/
+      
+      - name: Set up local properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
       
       - name: Build Android debug
         script: |
           cd android
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace --info
     
     artifacts:
       - android/app/build/outputs/**/*.apk
