@@ -11,11 +11,13 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
-          yarn install
-      - name: Install Expo CLI and EAS
+          yarn install      - name: Install Expo CLI and EAS
         script: |
           npm install -g expo-cli
           npm install -g eas-cli
+      - name: Run prebuild
+        script: |
+          npx expo prebuild --platform android --clean
       - name: Generate debug keystore
         script: |
           cd android
@@ -23,13 +25,15 @@ workflows:
           mv debug.keystore app/
       - name: Set up local properties
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
-      - name: Build Android debug
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"      - name: Build Android debug
         script: |
           cd android
           chmod +x gradlew
+          # Run build with stacktrace for better error reporting
           ./gradlew clean
-          ./gradlew assembleDebug
+          ./gradlew generateDebugBuildConfig
+          ./gradlew :app:processDebugResources
+          ./gradlew assembleDebug --stacktrace
     artifacts:
       - android/app/build/outputs/**/*.apk
     publishing:
