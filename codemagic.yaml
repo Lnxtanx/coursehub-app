@@ -12,17 +12,34 @@ workflows:
       - name: Install dependencies
         script: |
           yarn install
-          # Install expo as a dependency
           yarn add expo@latest
-      
+          
       - name: Install Expo CLI
         script: |
           yarn add @expo/cli
           yarn expo install
-      
-      - name: Run prebuild
+          
+      - name: Prepare Android build
         script: |
-          yarn expo prebuild -p android --clean
+          # Create a temporary app config that skips image processing
+          cat > temp-app.json << EOL
+          {
+            "expo": {
+              "name": "Course Hub",
+              "slug": "course-hub-by-vivek",
+              "version": "1.0.0",
+              "android": {
+                "package": "com.vivek1387.coursehub"
+              }
+            }
+          }
+          EOL
+          
+          # Run prebuild with minimal config
+          EXPO_CONFIG_PATH=temp-app.json yarn expo prebuild -p android --clean --no-install
+          
+          # After prebuild, restore original app.json configuration
+          cp app.json temp-app.json
       
       - name: Generate debug keystore
         script: |
@@ -38,16 +55,8 @@ workflows:
         script: |
           cd android
           chmod +x gradlew
-          # Run build with stacktrace for better error reporting
           ./gradlew clean
-          ./gradlew generateDebugBuildConfig
-          ./gradlew :app:processDebugResources
           ./gradlew assembleDebug --stacktrace
     
     artifacts:
       - android/app/build/outputs/**/*.apk
-    
-    publishing:
-      email:
-        recipients:
-          - user@example.com
