@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android") version "$kotlinVersion"
+    id("org.jetbrains.kotlin.android")
     id("com.facebook.react")
 }
 
@@ -88,6 +88,10 @@ android {
 
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 
     namespace "com.vivek1387.coursehub"
     defaultConfig {
@@ -178,4 +182,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${rootProject.ext.kotlinVersion}")
 }
