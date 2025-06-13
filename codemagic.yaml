@@ -1,37 +1,41 @@
 workflows:
   react-native-android:
     name: React Native Android
-    max_build_duration: 60
+    max_build_duration: 120
+    instance_type: mac_mini_m1
     environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play
       vars:
-        # Android Keystore configuration
-        CM_KEYSTORE: Encrypted(...) # Add your encrypted keystore here
-        CM_KEYSTORE_PASSWORD: Encrypted(...)
-        CM_KEY_ALIAS_PASSWORD: Encrypted(...)
-        CM_KEY_ALIAS_USERNAME: Encrypted(...)
+        PACKAGE_NAME: "com.vivek1387.coursehub"
       node: latest
-    cache:
-      cache_paths:
-        - $CM_BUILD_DIR/node_modules
     scripts:
       - name: Install dependencies
         script: |
-          npm install
+          yarn install
       - name: Install Expo CLI and EAS
         script: |
           npm install -g expo-cli
           npm install -g eas-cli
-      - name: Setup app signing
+      - name: Set up local properties
         script: |
-          echo $CM_KEYSTORE | base64 --decode > $CM_BUILD_DIR/keystore.jks
-      - name: Build Android
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Build Android release
         script: |
           cd android
           chmod +x gradlew
+          ./gradlew bundleRelease
           ./gradlew assembleRelease
     artifacts:
       - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
     publishing:
       email:
         recipients:
           - user@example.com # Replace with your email
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
