@@ -11,6 +11,8 @@ workflows:
         script: npm install
       - name: Set up local properties
         script: mkdir -p android && echo "sdk.dir=$ANDROID_SDK_ROOT" > "./android/local.properties"
+      - name: Make gradlew executable
+        script: chmod +x android/gradlew
       - name: Build Android release
         script: cd android && ./gradlew assembleRelease
     artifacts:
