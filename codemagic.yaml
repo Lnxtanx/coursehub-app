@@ -1,27 +1,30 @@
 workflows:
-  react-native-android:
-    name: React Native Android
+  expo-production:
+    name: Expo Production Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
       node: latest
-      java: 17
+      groups:
+        - expo_credentials
     scripts:
       - name: Install dependencies
-        script: npm install
-      - name: Generate Android files
-        script: npx expo prebuild -p android --no-install
-      - name: Set up local properties
-        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "./android/local.properties"
-      - name: Make gradlew executable
-        script: chmod +x ./android/gradlew
-      - name: Set JAVA_HOME
-        script: export JAVA_HOME="$JAVA_HOME_17_X64" && echo $JAVA_HOME
-      - name: Build Android release
-        script: cd android && ./gradlew assembleRelease --stacktrace
+        script: |
+          npm install --legacy-peer-deps
+          npm install -g eas-cli@latest
+      - name: Setup Expo and EAS
+        script: |
+          npx expo install
+          eas login -u $EXPO_USERNAME -p $EXPO_PASSWORD
+      - name: Build with EAS
+        script: |
+          eas build --platform android --profile preview --non-interactive
     artifacts:
-      - android/app/build/outputs/**/*.apk
+      - '*.apk'
+      - '*.aab'
     publishing:
       email:
         recipients:
           - vivekvenom138@gmail.com
+      scripts:
+        - echo "Build completed successfully!"
