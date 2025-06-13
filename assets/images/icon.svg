@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0ea5e9"/>
+  <circle cx="512" cy="512" r="450" fill="#ffffff" opacity="0.1"/>
+  <circle cx="512" cy="512" r="380" fill="#ffffff" opacity="0.1"/>
+  <path d="M300 412 L512 300 L724 412 L512 524 Z" fill="#ffffff"/>
+  <path d="M724 412 L724 600 L512 712 L512 524 Z" fill="#ffffff" opacity="0.9"/>
+  <path d="M300 412 L300 600 L512 712 L512 524 Z" fill="#ffffff" opacity="0.7"/>
+  <text x="512" y="850" font-family="Arial" font-size="80" fill="#ffffff" text-anchor="middle">CourseHub</text>
+  <text x="512" y="900" font-family="Arial" font-size="40" fill="#ffffff" text-anchor="middle">by Vivek</text>
+</svg>
