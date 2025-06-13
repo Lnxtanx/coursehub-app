@@ -87,13 +87,15 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.coursehub"
+    namespace "com.vivek1387.coursehub"
     defaultConfig {
-        applicationId "com.coursehub"
+        applicationId "com.vivek1387.coursehub"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", "false")
+        buildConfigField("boolean", "IS_HERMES_ENABLED", "true")
     }
     signingConfigs {
         debug {
