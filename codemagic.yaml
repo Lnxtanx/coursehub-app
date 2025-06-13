@@ -1,30 +1,37 @@
 workflows:
-  expo-production:
-    name: Expo Production Build
+  android-workflow:
+    name: Android Build
     max_build_duration: 60
-    instance_type: mac_mini_m1
     environment:
+      vars:
+        # Android Keystore configuration
+        CM_KEYSTORE: Encrypted(...) # Add your encrypted keystore here
+        CM_KEYSTORE_PASSWORD: Encrypted(...)
+        CM_KEY_ALIAS_PASSWORD: Encrypted(...)
+        CM_KEY_ALIAS_USERNAME: Encrypted(...)
       node: latest
-      groups:
-        - expo_credentials
+    cache:
+      cache_paths:
+        - $CM_BUILD_DIR/node_modules
     scripts:
       - name: Install dependencies
         script: |
-          npm install --legacy-peer-deps
-          npm install -g eas-cli@latest
-      - name: Setup Expo and EAS
+          npm install
+      - name: Install Expo CLI and EAS
         script: |
-          npx expo install
-          eas login -u $EXPO_USERNAME -p $EXPO_PASSWORD
-      - name: Build with EAS
+          npm install -g expo-cli
+          npm install -g eas-cli
+      - name: Setup app signing
         script: |
-          eas build --platform android --profile preview --non-interactive
+          echo $CM_KEYSTORE | base64 --decode > $CM_BUILD_DIR/keystore.jks
+      - name: Build Android
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
     artifacts:
-      - '*.apk'
-      - '*.aab'
+      - android/app/build/outputs/**/*.apk
     publishing:
       email:
         recipients:
-          - vivekvenom138@gmail.com
-      scripts:
-        - echo "Build completed successfully!"
+          - user@example.com # Replace with your email
